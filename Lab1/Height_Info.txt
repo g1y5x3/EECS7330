@@ -1,0 +1,5 @@
+Height 0:	 0.4cm	
+Height 1:	 4.3cm
+Height 2:	 8.1cm
+Height 3:	11.9cm
+Height 4:	15.8cm

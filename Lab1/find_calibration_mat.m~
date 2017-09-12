@@ -1,4 +1,4 @@
-%% Read the image data
+
 % load('left_corners.mat')
 load('right_corners.mat')
 
@@ -125,12 +125,8 @@ end
 % Construct the final A matrix
 A = vertcat(A1,A2,A3,A4,A5);
 
-%% Solution for Aq = 0
 % Decomposition
 [U, D, V] = svd(A);
 
 % q is the last column of matrix V
-q = V(:,end);
-
-%% Save the calibrated solution
-save('Calib_q_right.mat', 'q')
+q = V(:,12);

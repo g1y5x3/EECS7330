@@ -1,0 +1,7 @@
+Height 1:	 0.7cm	
+Height 2:	 4.5cm
+Height 3:	 8.3cm
+Height 4:	12.2cm
+Height 5:	16.1cm
+
+Height Test:	 1.9cm

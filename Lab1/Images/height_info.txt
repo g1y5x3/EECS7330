@@ -1,0 +1,7 @@
+height1 = 13	mm
+height2 = 51	mm
+height3 = 89	mm
+height4 = 127	mm
+height5 = 164	mm
+
+test	= 50 	mm

@@ -1,0 +1,2 @@
+hello_world
+-DCATKIN_DEVEL_PREFIX=/home2/yixiang/Workspace/Mizzou/EECS7330/Labs/Lab4/catkin_ws/devel -DCMAKE_INSTALL_PREFIX=/home2/yixiang/Workspace/Mizzou/EECS7330/Labs/Lab4/catkin_ws/install -G Unix Makefiles

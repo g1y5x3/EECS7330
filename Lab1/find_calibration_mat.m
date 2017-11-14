@@ -31,6 +31,7 @@ for i = 1 : N
 end
 
 %% Solution for Aq = 0
+
 % Decomposition
 [U, D, V] = svd(A);
 

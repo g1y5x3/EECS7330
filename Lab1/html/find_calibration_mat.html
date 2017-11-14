@@ -1,0 +1,154 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>find_calibration_mat</title><meta name="generator" content="MATLAB 9.2"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-09-26"><meta name="DC.source" content="find_calibration_mat.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Read images for calibration</a></li><li><a href="#3">Construct the A matrix</a></li><li><a href="#4">Solution for Aq = 0</a></li></ul></div><pre class="codeinput">clear, clc
+</pre><h2 id="2">Read images for calibration</h2><pre class="codeinput">load(<span class="string">'left_corners.mat'</span>)
+<span class="comment">% load('right_corners.mat')</span>
+</pre><h2 id="3">Construct the A matrix</h2><pre class="codeinput">XYZ = [X_1 X_2 X_3 X_4 X_5];
+uv  = [x_1 x_2 x_3 x_4 x_5];
+
+N = size(XYZ, 2);
+A = zeros(2 * N, 12);
+<span class="keyword">for</span> i = 1 : N
+    <span class="comment">% Row 1</span>
+    A(2*i-1,1:3) = XYZ(:,i);                <span class="comment">% x y z</span>
+    A(2*i-1,4)   = 1;                       <span class="comment">% 1</span>
+    A(2*i-1,5:8) = [0 0 0 0];               <span class="comment">% 0 0 0 0</span>
+    A(2*i-1,9)   = -uv(1,i) * XYZ(1,i);     <span class="comment">% -u * x</span>
+    A(2*i-1,10)  = -uv(1,i) * XYZ(2,i);     <span class="comment">% -u * y</span>
+    A(2*i-1,11)  = -uv(1,i) * XYZ(3,i);     <span class="comment">% -u * z</span>
+    A(2*i-1,12)  = -uv(1,i);                <span class="comment">% -u</span>
+
+    <span class="comment">% Row 2</span>
+    A(2*i,1:4)   = [0 0 0 0];               <span class="comment">% 0 0 0 0</span>
+    A(2*i,5:7)   = XYZ(:,i);                <span class="comment">% x y z</span>
+    A(2*i,8)     = 1;                       <span class="comment">% 1</span>
+    A(2*i,9)     = -uv(2,i) * XYZ(1,i);     <span class="comment">% -v * x</span>
+    A(2*i,10)    = -uv(2,i) * XYZ(2,i);     <span class="comment">% -v * y</span>
+    A(2*i,11)    = -uv(2,i) * XYZ(3,i);     <span class="comment">% -v * z</span>
+    A(2*i,12)    = -uv(2,i);                <span class="comment">% -v</span>
+<span class="keyword">end</span>
+</pre><h2 id="4">Solution for Aq = 0</h2><pre class="codeinput"><span class="comment">% Decomposition</span>
+[U, D, V] = svd(A);
+
+<span class="comment">% q is the last column of matrix V</span>
+q = V(:,end);
+
+<span class="comment">% Restruct the projection matrix P</span>
+P = [q(1) q(2)  q(3)  q(4);<span class="keyword">...</span>
+     q(5) q(6)  q(7)  q(8);<span class="keyword">...</span>
+     q(9) q(10) q(11) q(12);];
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2017a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+clear, clc
+
+%% Read images for calibration
+load('left_corners.mat')
+% load('right_corners.mat')
+
+%% Construct the A matrix
+XYZ = [X_1 X_2 X_3 X_4 X_5];
+uv  = [x_1 x_2 x_3 x_4 x_5];
+
+N = size(XYZ, 2);
+A = zeros(2 * N, 12);
+for i = 1 : N
+    % Row 1
+    A(2*i-1,1:3) = XYZ(:,i);                % x y z
+    A(2*i-1,4)   = 1;                       % 1
+    A(2*i-1,5:8) = [0 0 0 0];               % 0 0 0 0
+    A(2*i-1,9)   = -uv(1,i) * XYZ(1,i);     % -u * x
+    A(2*i-1,10)  = -uv(1,i) * XYZ(2,i);     % -u * y
+    A(2*i-1,11)  = -uv(1,i) * XYZ(3,i);     % -u * z
+    A(2*i-1,12)  = -uv(1,i);                % -u
+    
+    % Row 2
+    A(2*i,1:4)   = [0 0 0 0];               % 0 0 0 0
+    A(2*i,5:7)   = XYZ(:,i);                % x y z
+    A(2*i,8)     = 1;                       % 1
+    A(2*i,9)     = -uv(2,i) * XYZ(1,i);     % -v * x
+    A(2*i,10)    = -uv(2,i) * XYZ(2,i);     % -v * y
+    A(2*i,11)    = -uv(2,i) * XYZ(3,i);     % -v * z
+    A(2*i,12)    = -uv(2,i);                % -v        
+end
+
+%% Solution for Aq = 0
+
+% Decomposition
+[U, D, V] = svd(A);
+
+% q is the last column of matrix V
+q = V(:,end);
+
+% Restruct the projection matrix P
+P = [q(1) q(2)  q(3)  q(4);...
+     q(5) q(6)  q(7)  q(8);...
+     q(9) q(10) q(11) q(12);];
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,12 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home2/yixiang/Workspace/Mizzou/EECS7330/Labs/Lab4/catkin_ws/src/hello_world/src/hello_world.cpp
+iostream
+-
+
